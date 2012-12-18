@@ -21,7 +21,7 @@ $THEME->parents = array('canvas','base');
 ////////////////////////////////////////////////////
 
 
-$THEME->sheets = array('awesomebar_black', 'core');
+$THEME->sheets = array('awesomebar', 'core');
 
 ////////////////////////////////////////////////////
 // Name of the stylesheet(s) you've including in

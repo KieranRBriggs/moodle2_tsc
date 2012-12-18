@@ -22,7 +22,7 @@ echo $OUTPUT->doctype() ?>
 </head>
 <body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
-<div id="awesomebar">
+<div id="awesomebar" class="moodle2_tsc-awesome-bar">
     <?php
         if( $this->page->pagelayout != 'maintenance') // Don't show awesomebar if site is being upgraded 
          {
@@ -35,7 +35,7 @@ echo $OUTPUT->doctype() ?>
             if ($hascustommenu && !empty($PAGE->theme->settings->custommenuinawesomebar) && !empty($PAGE->theme->settings->custommenuafterawesomebar)) {
                 echo $custommenu;
             }
-            echo $topsettings->onlineusers();
+            //echo $topsettings->onlineusers();
             echo $topsettings->settings_search_box();
         }
     ?>

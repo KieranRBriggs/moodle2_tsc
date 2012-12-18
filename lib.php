@@ -470,7 +470,23 @@ class moodle2_tsc_expand_navigation extends global_navigation {
 
         $this->rootnodes = array();
         $this->rootnodes['site']      = $this->add_course($SITE);
+        $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), new moodle_url('/my'), self::TYPE_ROOTNODE, null, 'mycourses');
         $this->rootnodes['courses'] = $this->add(get_string('courses'), null, self::TYPE_ROOTNODE, null, 'courses');
+        
+        if(function_exists('enrol_user_sees_own_courses')) {
+            // Determine if the user is enrolled in any course.
+            $enrolledinanycourse = enrol_user_sees_own_courses();
+
+            if ($enrolledinanycourse) {
+                $this->rootnodes['mycourses']->isexpandable = true;
+                if ($CFG->navshowallcourses) {
+                    // When we show all courses we need to show both the my courses and the regular courses branch.
+                    $this->rootnodes['courses']->isexpandable = true;
+                }
+            } else {
+                $this->rootnodes['courses']->isexpandable = true;
+            }
+        }
         
         $this->expand($this->branchtype, $this->instanceid);
     }
@@ -480,6 +496,15 @@ class moodle2_tsc_expand_navigation extends global_navigation {
         static $moodle2_tsc_expanded_courses = array();
         // Branchtype will be one of navigation_node::TYPE_*
         switch ($branchtype) {
+            case self::TYPE_ROOTNODE :
+                if ($id === 'mycourses') {
+                    $this->rootnodes['mycourses']->isexpandable = true;
+                    $this->load_courses_enrolled();
+                } else if ($id === 'courses') {
+                    $this->rootnodes['courses']->isexpandable = true;
+                    $this->load_courses_other();
+                }
+                break;
             case self::TYPE_CATEGORY :
                 $this->load_all_categories($id);
                 $limit = 20;
@@ -494,13 +519,14 @@ class moodle2_tsc_expand_navigation extends global_navigation {
             case self::TYPE_COURSE :
                 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
                 try {
-                    moodle2_tsc_require_course_login($course);
-                    //$this->page = $PAGE;
-                    $this->page->set_context(get_context_instance(CONTEXT_COURSE, $course->id));
-                    $coursenode = $this->add_course($course);
-                    $this->add_course_essentials($coursenode, $course);
-                    if ($this->format_display_course_content($course->format) && $PAGE->course->id == $course->id) {
-                        $this->load_course_sections($course, $coursenode);
+                    if(!array_key_exists($course->id, $moodle2_tsc_expanded_courses)) {
+                        $coursenode = $this->add_course($course);
+                        $this->page->set_context(get_context_instance(CONTEXT_COURSE, $course->id));
+                        $this->add_course_essentials($coursenode, $course);
+                        if ($PAGE->course->id == $course->id && (!method_exists($this, 'format_display_course_content') || $this->format_display_course_content($course->format))) {
+                            moodle2_tsc_require_course_login($course);
+                            $moodle2_tsc_expanded_courses[$course->id] = $this->load_course_sections($course, $coursenode);
+                        }
                     }
                 } catch(require_login_exception $rle) {
                     $coursenode = $this->add_course($course);
@@ -513,13 +539,22 @@ class moodle2_tsc_expand_navigation extends global_navigation {
                         WHERE cs.id = ?';
                 $course = $DB->get_record_sql($sql, array($id), MUST_EXIST);
                 try {
-                    moodle2_tsc_require_course_login($course);
-                    //$this->page = $PAGE;
                     $this->page->set_context(get_context_instance(CONTEXT_COURSE, $course->id));
                     if(!array_key_exists($course->id, $moodle2_tsc_expanded_courses)) {
                         $coursenode = $this->add_course($course);
                         $this->add_course_essentials($coursenode, $course);
                         $moodle2_tsc_expanded_courses[$course->id] = $this->load_course_sections($course, $coursenode);
+                    }
+                    if (empty($moodle2_tsc_expanded_courses[$course->id])) {
+                        // 2.4 compat - load_course_sections no longer returns the list of sections
+                        $sectionnodes = array();
+                        foreach ($coursenode->children as $node) {
+                            if($node->type != self::TYPE_SECTION) continue;
+                            $section = new stdClass();
+                            $section->sectionnode = $node;
+                            $sectionnodes[] = $section;
+                        }
+                        $moodle2_tsc_expanded_courses[$course->id] = $sectionnodes;
                     }
                     $sections = $moodle2_tsc_expanded_courses[$course->id];
                     if(method_exists($this,'generate_sections_and_activities')) {
@@ -548,6 +583,51 @@ class moodle2_tsc_expand_navigation extends global_navigation {
         }
         $this->find_expandable($this->expandable);
         return $this->expandable;
+    }
+
+    /**
+     * They've expanded the 'my courses' branch.
+     */
+    protected function load_courses_enrolled() {
+        global $DB;
+        $courses = enrol_get_my_courses();
+        if ($this->show_my_categories(true)) {
+            // OK Actually we are loading categories. We only want to load categories that have a parent of 0.
+            // In order to make sure we load everything required we must first find the categories that are not
+            // base categories and work out the bottom category in thier path.
+            $categoryids = array();
+            foreach ($courses as $course) {
+                $categoryids[] = $course->category;
+            }
+            $categoryids = array_unique($categoryids);
+            list($sql, $params) = $DB->get_in_or_equal($categoryids);
+            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent <> 0', $params, 'sortorder, id', 'id, path');
+            foreach ($categories as $category) {
+                $bits = explode('/', trim($category->path,'/'));
+                $categoryids[] = array_shift($bits);
+            }
+            $categoryids = array_unique($categoryids);
+            $categories->close();
+
+            // Now we load the base categories.
+            list($sql, $params) = $DB->get_in_or_equal($categoryids);
+            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent = 0', $params, 'sortorder, id');
+            foreach ($categories as $category) {
+                $this->add_category($category, $this->rootnodes['mycourses']);
+            }
+            $categories->close();
+        } else {
+            foreach ($courses as $course) {
+                $this->add_course($course, false, self::COURSE_MY);
+            }
+        }
+    }
+
+    /**
+     * They've expanded the general 'courses' branch.
+     */
+    protected function load_courses_other() {
+        $this->load_all_courses();
     }
 
     public function get_expandable() {

@@ -122,6 +122,7 @@ class theme_moodle2_tsc_topsettings_renderer extends plugin_renderer_base {
         $content = $this->navigation_node($navigation, array('class' => 'dropdown  dropdown-horizontal'));
         return $content;
     }
+    
     public function settings_search_box() {
         global $CFG;
         $content = "";
@@ -138,7 +139,11 @@ class theme_moodle2_tsc_topsettings_renderer extends plugin_renderer_base {
     public function navigation_tree(global_navigation $navigation) {
         global $CFG;
         $content = html_writer::start_tag('ul', array('id' => 'awesomeHomeMenu', 'class' => 'dropdown  dropdown-horizontal'));
-       
+        $content .= html_writer::start_tag('li');
+        $content .= html_writer::start_tag('a', array('href' => "$CFG->wwwroot", 'id' =>'home'));
+        $content .= html_writer::empty_tag('img', array('alt' => '', 'src' =>$this->pix_url('home_icon', 'theme')));
+        $content .= html_writer::end_tag('a');
+        $content .= html_writer::end_tag('li');
         $content .= html_writer::start_tag('li');
         $content .= html_writer::start_tag('span', array('id' =>'awesomeNavMenu'));
         $content .= html_writer::empty_tag('img', array('alt' => '', 'src' =>$this->pix_url('user_silhouette', 'theme')));
@@ -147,10 +152,7 @@ class theme_moodle2_tsc_topsettings_renderer extends plugin_renderer_base {
         	$content .= $this->navigation_node($navigation, array());
         }
         $content .= html_writer::end_tag('li');
-        
         $content .= html_writer::end_tag('ul');
-        
-        
 
         return $content;
     }
@@ -210,7 +212,6 @@ class theme_moodle2_tsc_topsettings_renderer extends plugin_renderer_base {
         }
     }
 
-    
     // Creates the Search box in awesomebar
     public function search_form(moodle_url $formtarget, $searchvalue, $querytype) {
         global $CFG;
@@ -246,8 +247,7 @@ class theme_moodle2_tsc_topsettings_renderer extends plugin_renderer_base {
         return $content;
     }
 
-
-    public function course_search() {
+    public function course_searchbob() {
         global $CFG;
         $content = "";
         if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {

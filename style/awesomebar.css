@@ -33,7 +33,7 @@ body #dock {top:26px; height:auto; bottom:0px;} /* Start dock at bottom of Aweso
 .topadminsearchform{float:right;}
 input#topadminsearchquery{border:1px solid #aaa; -moz-border-radius:10px; -webkit-border-radius:10px; border-radius:10px; background:#fff url([[pix:theme|search_icon]]) no-repeat 2px 1px; width:200px; margin:4px 10px 2px 0; padding:1px 0 0 17px;}
 .moodle2_tsc-awesome-bar a, .moodle2_tsc-awesome-bar a:visited, .moodle2_tsc-awesome-bar a:hover, .moodle2_tsc-awesome-bar a:link {color:#fff;}
-.moodle2_tsc-awesome-bar a:hover {background-color:#76b900;}
+.moodle2_tsc-awesome-bar a:hover {background-color:#AF0C0C;}
 .moodle2_tsc-awesome-bar, .moodle2_tsc-awesome-bar li {background-color:#333; color:#fff;}
 .moodle2_tsc-awesome-bar li:hover {background-color:#595959;}
 .moodle2_tsc-awesome-bar ul ul li span, .moodle2_tsc-awesome-bar li.clickable-with-children > a {padding:3px 20px; background-image:url([[pix:theme|nav-arrow-right]]); background-position:100% 50%; background-repeat:no-repeat;}
