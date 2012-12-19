@@ -11,6 +11,8 @@ $hasnotices = $PAGE->blocks->region_has_content('notices', $OUTPUT);
 $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
+moodle2_tsc_initialise_awesomebar($PAGE);
+
 $bodyclasses = array();
 if ($hassidepre && !$hassidepost) {
     $bodyclasses[] = 'side-pre-only';

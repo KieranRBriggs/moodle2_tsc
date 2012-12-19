@@ -7,6 +7,8 @@ $hasfooter = (empty($PAGE->layout_options['nofooter']));
 $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
+moodle2_tsc_initialise_awesomebar($PAGE);
+
 $bodyclasses = array();
 
 if ($hascustommenu) {

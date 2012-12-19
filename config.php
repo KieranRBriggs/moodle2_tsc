@@ -98,7 +98,7 @@ $THEME->layouts = array(
     ),
     
     'course' => array(
-    	'file' => 'course.php',
+    	'file' => 'general.php',
         'regions' => array('side-pre', 'side-post', 'notices'),
         'defaultregion' => 'side-pre',
     ),

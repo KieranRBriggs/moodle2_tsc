@@ -8,6 +8,8 @@ $hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
 $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
+moodle2_tsc_initialise_awesomebar($PAGE);
+
 $bodyclasses = array();
 if ($hassidepre && !$hassidepost) {
     $bodyclasses[] = 'side-pre-only';
@@ -43,8 +45,8 @@ echo $OUTPUT->doctype() ?>
                 echo $custommenu;
             }
             
-            echo $topsettings->onlineusers();
-            echo $topsettings->course_search();
+            //echo $topsettings->onlineusers();
+            //echo $topsettings->course_search();
             echo $topsettings->settings_search_box();
         }
     ?>
