@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2012082900; // The current module version (Date: YYYYMMDDXX)
+$plugin->version   = 2012121900; // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2012061700; // Requires this Moodle version
 $plugin->component = 'theme_moodle2_tsc'; // Full name of the plugin (used for diagnostics)
+$plugin->maturity = MATURITY_UNSTABLE
+$plugin->release = "2.0 Alpha";
