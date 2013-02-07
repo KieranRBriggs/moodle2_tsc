@@ -1,7 +1,6 @@
 <?php
 
 require_once($CFG->dirroot.'/theme/moodle2_tsc/lib.php');
-
 $hasheading = ($PAGE->heading);
 $hasnavbar = (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar());
 $hasfooter = (empty($PAGE->layout_options['nofooter']));
@@ -111,7 +110,7 @@ echo $OUTPUT->doctype() ?>
                                 		</div>
                                 	<?php } ?>
                                 	<img id="myMoodleBanner" src="<?php echo $OUTPUT->pix_url('myMoodle_banner', 'theme'); ?>" alt="" />
-                                    <?php echo $OUTPUT->main_content() ?>
+                                	<?php echo $OUTPUT->main_content() ?>
                                 </div>
                             </div>
                         </div>
