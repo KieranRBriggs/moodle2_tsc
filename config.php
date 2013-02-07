@@ -98,7 +98,7 @@ $THEME->layouts = array(
     ),
     
     'course' => array(
-    	'file' => 'general.php',
+    	'file' => 'course.php',
         'regions' => array('side-pre', 'side-post', 'notices'),
         'defaultregion' => 'side-pre',
     ),
@@ -106,6 +106,13 @@ $THEME->layouts = array(
     'coursecategory' => array(
     'file' => 'coursecategory.php',
     ),
+    
+    'popup' => array(
+        'file' => 'popup.php',
+        'regions' => array(),
+        'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>true, 'nocourseheaderfooter'=>true),
+    ),
+
     
     'admin' => array(
     	'file' => 'admin.php',
