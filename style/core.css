@@ -357,13 +357,6 @@ body.has_dock {
 .yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {background-position: 3px center;}
 .yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {background-position: 0% 50%;}
 
-#custommenu {
-    clear: both;
-    background-image: url([[pix:theme|headingblock]]);
-    margin-bottom: 5px;
-    
-}
-
 .yui3-skin-sam #page .yui3-menu-label,
 .yui3-skin-sam #custommenu .yui3-menuitem-content  {
     color: #fff;
@@ -415,7 +408,8 @@ body.has_dock {
     -webkit-border-radius: 3px;
   	color:#FFFFFF;
   	text-decoration:none;
-  	
+  	z-index: 0;
+  	/*background-image: url([[pix:theme|headingblock]]);*/
     
 }
 
@@ -490,6 +484,13 @@ body.has_dock {
 
 .cmanager td, .cmanager, th {
 	padding:0.15px;
+}
+
+/* Core Hacks */
+
+/* hack to make report tables scroll */
+.pagelayout-report .no-overflow {
+	overflow: auto;
 }
 
 /* Course Header */
