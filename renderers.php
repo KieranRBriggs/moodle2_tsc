@@ -112,6 +112,19 @@ class theme_moodle2_tsc_core_renderer extends core_renderer {
         return $output;
     }
 
+	/**
+	 * Overriding the renderer to output for HTML5.
+	 *
+	 * @return string the DOCTYPE declaration that should be used.
+	 */
+	public function doctype() {
+	    global $CFG;
+
+	    $doctype = '<!DOCTYPE html><!-- This is for HTML 5 Compatibility -->' . "\n";
+	    $this->contenttype = 'text/html; charset=utf-8';
+	    return $doctype;
+	}
+
 }
 
 class theme_moodle2_tsc_topsettings_renderer extends plugin_renderer_base {
@@ -260,6 +273,91 @@ class theme_moodle2_tsc_topsettings_renderer extends plugin_renderer_base {
         return $content;
     }
 
+    
+///////////////////////////////////
+//
+// Get students social media links
+//
+///////////////////////////////////
+
+   public function social_media() {
+	    global $USER;
+	    
+	      // Get Social Media links
+        
+        $socialmedia = '';
+        
+        //Twitter
+	    if ($USER->profile['twitter']) {
+	        $twitterurl = 'http://www.twitter.com/'.$USER->profile['twitter'];
+	        $socialmedia .= html_writer::nonempty_tag('a',html_writer::empty_tag('img', array('src' => $this->pix_url('twitter', 'block_course_overview_plus'), 'class' => 'iconlarge')), array('href' => $twitterurl));
+        }
+        
+        //Facebook
+        if ($USER->profile['facebook']) {
+	        $facebookurl = 'http://www.facebook.com/'.$USER->profile['facebook'];
+	        $socialmedia .= html_writer::nonempty_tag('a',html_writer::empty_tag('img', array('src' => $this->pix_url('facebook', 'block_course_overview_plus'), 'class' => 'iconlarge')), array('href' => $facebookurl));
+        }
+        
+        //Flickr
+        if ($USER->profile['flickr']) {
+	        $flickrurl = 'http://www.flickr.com/'.$USER->profile['flickr'];
+	        $socialmedia .= html_writer::nonempty_tag('a',html_writer::empty_tag('img', array('src' => $this->pix_url('flickr', 'block_course_overview_plus'), 'class' => 'iconlarge')), array('href' => $flickrurl));
+         }
+         
+         //Instagram
+         if ($USER->profile['instagram']) {
+	         $instagramurl = 'http://www.instagram.com/'.$USER->profile['instagram'];
+	         $socialmedia .= html_writer::nonempty_tag('a',html_writer::empty_tag('img', array('src' => $this->pix_url('instagram', 'block_course_overview_plus'), 'class' => 'iconlarge')), array('href' => $instagramurl));
+         }
+         
+         //Googleplus
+         if ($USER->profile['googleplus']) {
+	         $googleplusurl = 'http://plus.google.com/'.$USER->profile['googleplus'];
+	         $socialmedia .= html_writer::nonempty_tag('a',html_writer::empty_tag('img', array('src' => $this->pix_url('googleplus', 'block_course_overview_plus'), 'class' => 'iconlarge')), array('href' => $googleplusurl));
+        }
+        
+        return $socialmedia;
+	    
+    }
+
+    /**
+     * Creates html for welcome area
+     *
+     * @param int $msgcount number of messages
+     * @return string html string for welcome area.
+     */
+     
+    public function welcome_area($msgcount) {
+        global $USER;
+        $output = $this->output->box_start('welcome_area');
+
+        $picture = $this->output->user_picture($USER, array('size' => 75, 'class' => 'welcome_userpicture'));
+        $output .= html_writer::tag('div', $picture, array('class' => 'profilepicture'));
+
+        $output .= $this->output->box_start('welcome_message');
+        $output .= $this->output->heading(get_string('welcome', 'block_course_overview_plus', $USER->firstname));
+
+        $socialmedia = $this->social_media();
+        
+        $output .= html_writer::tag('div', $socialmedia, array('class' => 'socialmedia'));
+        
+        $plural = 's';
+        if ($msgcount > 0) {
+            $output .= get_string('youhavemessages', 'block_course_overview_plus', $msgcount);
+        } else {
+            $output .= get_string('youhavenomessages', 'block_course_overview_plus');
+            if ($msgcount == 1) {
+                $plural = '';
+            }
+        }
+        $output .= html_writer::link(new moodle_url('/message/index.php'), get_string('message'.$plural, 'block_course_overview_plus'));
+        $output .= $this->output->box_end();
+        $output .= $this->output->box('', 'flush');
+        $output .= $this->output->box_end();
+
+        return $output;
+    }
 
 }
 
